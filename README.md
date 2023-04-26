@@ -8,8 +8,8 @@
     - [Linear Data Structure](#linear-data-structure)
     - [Tree Data Structure](#tree-data-structure)
     - [Graph Data Structure](#graph-data-structure)
-    - [Hash Map](#hash-map)
-    - [Sort](#sort)
+  - [Hash Map](#hash-map)
+  - [Sort](#sort)
 ##  Basic Data Structure and Algorithms
 ### Linear Data Structure
 1. Array
@@ -33,7 +33,7 @@
 7. Dijkstra
 8. Floyd
 9. Top Sort
-### Hash Map
-### Sort
+## Hash Map
+## Sort
 
 
