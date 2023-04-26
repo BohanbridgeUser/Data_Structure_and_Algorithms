@@ -1,6 +1,7 @@
 /* this code is a simple array structure and its algorithm */
-#include <stdlib>
-#include <stdio>
+#include <stdlib.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 #define MAXITEM 100
 #define Null 0
@@ -21,18 +22,18 @@ PtrToArray CreateArray()
     int size = MAXITEM;
     return NewArray;
 }
-bool IsFUll(PtrToArray A)
+bool IsFull(PtrToArray A)
 {
-    return (num < size)? false:true;
+    return (A->num < A->size)? false:true;
 }
 bool IsEmpty(PtrToArray A)
 {
-    return (num > 0)? false:true;
+    return (A->num > 0)? false:true;
 }
 bool AddArray(PtrToArray A, ElementofArray X)
 {
     if(!IsFull(A)){
-        A->Data[num++] = X;
+        A->Data[A->num++] = X;
         return true;
     }else{
         printf("FULL ARRAY\n");
@@ -42,10 +43,15 @@ bool AddArray(PtrToArray A, ElementofArray X)
 bool DelArray(PtrToArray A, ElementofArray* X)
 {
     if(!IsEmpty(A)){
-        *X = A->Data[--num];
+        *X = A->Data[--A->num];
         return true;
     }else{
         printf("EMPTY ARRAY\n");
         return false;
     }
+}
+
+int main()
+{
+    return 0;
 }
