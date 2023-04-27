@@ -1,30 +1,30 @@
-#ifndef _STACK_H_
-#define _STACK_H_
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
 #include <iostream>
-
 template<typename T>
-class Stack{
+class Queue{
     private:
         struct Node{ T item; Node* next;};
         Node* head;
+        Node* rear;
         int num;
     public:
-        Stack();
-        ~Stack();
+        Queue();
+        ~Queue();
         bool isempty()const;
-        bool push(T& i);
-        bool pop(T& i);
+        bool InQueue(T& i);
+        bool DeQueue(T& i);
         int count()const;
 };
 
 template<typename T>
-Stack<T>:: Stack()
+Queue<T>::Queue()
 {
-    head = nullptr;
+    head = rear = nullptr;
     num = 0;
 }
 template<typename T>
-Stack<T>:: ~Stack()
+Queue<T>:: ~Queue()
 {
     Node* temp = head;
     while(head){
@@ -34,42 +34,44 @@ Stack<T>:: ~Stack()
     }
 }
 template<typename T>
-bool Stack<T>::isempty()const
+bool Queue<T>:: isempty()const
 {
     return (num == 0)? true:false;
 }
 template<typename T>
-bool Stack<T>::push(T& i)
+bool Queue<T>::InQueue(T& i)
 {
-    if(isempty()) {
-        head = new Node;
-        head->item = i;
-        head->next = nullptr;
-        num++;
+    Node* NewNode = new Node;
+    NewNode->item = i;
+    num++;
+    if(isempty()){
+        NewNode->next = nullptr;
+        head = NewNode;
+        rear = NewNode;
+        return true;
     }else{
-        Node* NewNode = new Node;
-        NewNode->item = i;
         NewNode->next = head;
         head = NewNode;
-        num++;
-    }
-    return true;
-}
-template<typename T>
-bool Stack<T>::pop(T& i)
-{
-    if(isempty()) return false;
-    else{
-        i = head->item;
-        Node* temp = head;
-        head = head->next;
-        delete temp;
-        num--;
         return true;
     }
 }
 template<typename T>
-int Stack<T>::count() const
+bool Queue<T>::DeQueue(T& i)
+{
+    if(!isempty()){
+        i = head->item;
+        Node* temp = head;
+        if(head->next) head = head->next;
+        else head = rear = nullptr;
+        delete temp;
+        num--;
+        return true;
+    }else{
+        return false;
+    }
+}
+template<typename T>
+int Queue<T>::count()const
 {
     return num;
 }
