@@ -33,7 +33,7 @@ bool Linklist<T>:: add(T& item)
     Node* NewNode = new Node;
     NewNode->Item = item;
     NewNode->Next = head->Next;
-    head->Next = NewNode;
+    head = NewNode;
     return true; 
 }
 template<typename T>
