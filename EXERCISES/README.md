@@ -8,3 +8,6 @@
 4. Hash Map
 5. Graph
 6. Sort
+7. Comprehensive Application
+   
+# <u>I havn't complete all code specification by now. I will update constantly. If you meet any problem, contact me at any time.
