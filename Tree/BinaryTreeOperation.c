@@ -10,7 +10,7 @@ struct TNode{
     BinTree Right;
 };
 
-void PreorderTraversal( BinTree BT )/* 先序遍历，由裁判实现，细节不表 */
+void PreorderTraversal( BinTree BT )/* 锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷刹锟斤拷锟绞碉拷郑锟较革拷诓锟斤拷锟? */
 {
 	if ( BT ){
 		printf("%d ",BT->Data);
@@ -18,7 +18,7 @@ void PreorderTraversal( BinTree BT )/* 先序遍历，由裁判实现，细节不表 */
 		PreorderTraversal( BT->Right );
 	}
 }
-void InorderTraversal( BinTree BT )  /* 中序遍历，由裁判实现，细节不表 */
+void InorderTraversal( BinTree BT )  /* 锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷刹锟斤拷锟绞碉拷郑锟较革拷诓锟斤拷锟? */
 {
 	if ( BT ){
 		PreorderTraversal( BT->Left );
@@ -32,7 +32,6 @@ BinTree Delete( BinTree BST, ElementType X );
 Position Find( BinTree BST, ElementType X );
 Position FindMin( BinTree BST );
 Position FindMax( BinTree BST );
-
 
 int main()
 {
@@ -70,7 +69,7 @@ int main()
 
     return 0;
 }
-/* 你的代码将被嵌在这里 */
+
 BinTree Insert( BinTree BST, ElementType X )
 {
 	if ( BST ){
