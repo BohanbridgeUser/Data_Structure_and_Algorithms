@@ -1,247 +1,233 @@
 #include <iostream>
-#include <stdio.h>
 
 template<typename T>
-class BinSTree
+class RBTree
 {
-private:
-    BinSTree* l;
-    BinSTree* r;
-    BinSTree* p;
-    T k;
-public:
-    BinSTree();
-    BinSTree(const T& item);
-    ~BinSTree();
-    BinSTree*& left() { return l; }
-    BinSTree*& right() { return r; }
-    BinSTree*& parent() { return p; }
-    T& key() { return k; }
-    BinSTree* find(const T& item);
-    BinSTree* findmax();
-    BinSTree* findmin();
-    bool insert(const T& item);
-    void del(const T& item);
-    void preordertraversal(void (*p)(T& item));
-    void inordertraversal(void (*p)(T& item));
-    void postordertraversal(void (*p)(T& item));
+    private:
+        enum color { red, black };
+    public:
+        struct TNode
+        {
+            T k;
+            color c;
+            TNode* l;
+            TNode* r;
+            TNode* p;
+        };
+        using PTNode = TNode*;
+    private:
+        PTNode root;
+        PTNode sentry;
+        void left_rotation(PTNode pt);
+        void right_rotation(PTNode pt);
+        void insert_fixup(PTNode pt);
+    public:
+        RBTree();
+        RBTree(const T& item);
+        ~RBTree();
+        PTNode find(const T& item, PTNode r);
+        PTNode findmax(PTNode rot = root);
+        PTNode findmin(PTNode rot = root);
+        void insert(const T& item, PTNode r);
+        void inordertraversal(PTNode pt);
+        PTNode retroot()const { return root; }
 };
+template<typename T>
+RBTree<T>::RBTree()
+{
+    sentry = new TNode;
+    sentry->T = T();
+    sentry->color = black;
+    sentry->l = nullptr;
+    sentry->r = nullptr;
+    sentry->p = nullptr;
+
+    root = sentry;
+}
+template<typename T>
+RBTree<T>::RBTree(const T& item)
+{
+    sentry = new TNode;
+    sentry->k = T();
+    sentry->c = black;
+    sentry->l = nullptr;
+    sentry->r = nullptr;
+    sentry->p = nullptr;
+
+    root = new TNode;
+    root->k = item;
+    root->l = sentry;
+    root->r = sentry;
+    root->p = sentry;
+}
+template<typename T>
+RBTree<T>::~RBTree()
+{
+    delete root->l;
+    delete root->r;
+    delete root;
+    delete sentry;
+}
 
 template<typename T>
-BinSTree<T>::BinSTree()
+typename RBTree<T>::PTNode RBTree<T>::find(const T& item, PTNode rot)
 {
-    l = r = p = nullptr;
-    k = T();
-}
-template<typename T>
-BinSTree<T>::BinSTree(const T& item)
-{
-    l = r = p = nullptr;
-    k = item;
-}
-template<typename T>
-BinSTree<T>::~BinSTree()
-{
-    std::cout << std::endl << k << ":destructor use\n";
-    delete l;
-    delete r;
-}
-template<typename T>
-BinSTree<T>* BinSTree<T>::find(const T& item)
-{
-    if (item == k) {
-        return this;
-    }
-    else if (k > item) {
-        if (l == nullptr) return nullptr;
-        else return l->find(item);
+    if (rot == sentry) {
+        return sentry;
     }
     else {
-        if (r == nullptr) return nullptr;
-        else return r->find(item);
-    }
-}
-template<typename T>
-bool BinSTree<T>::insert(const T& item)
-{
-    if (item == k) {
-        return true;
-    }
-    else if (k > item) {
-        if (l == nullptr) {
-            l = new BinSTree(item);
-            l->parent() = this;
-            return true;
+        if (rot->k == item) return rot;
+        else if (rot->k < item) {
+            return find(rot->l, item);
         }
-        else {
-            return l->insert(item);
+        else if (rot->k > item) {
+            return find(rot->r, item);
         }
-    }
-    else {
-        if (r == nullptr) {
-            r = new BinSTree(item);
-            r->parent() = this;
-            return true;
-        }
-        else {
-            return r->insert(item);
-        }
-    }
-}
-template<typename T>
-BinSTree<T>* BinSTree<T>::findmax()
-{
-    if (r == nullptr) {
-        return this;
-    }
-    else {
-        return r->findmax();
-    }
-}
-template<typename T>
-BinSTree<T>* BinSTree<T>::findmin()
-{
-    if (l == nullptr) {
-        return this;
-    }
-    else {
-        return l->findmin();
-    }
-}
-template<typename T>
-void BinSTree<T>::del(const T& item)
-{
-    BinSTree* target = find(item);
-    if (target->l == nullptr && target->r == nullptr) {
-        if (target == this) {
-            target->key() = T();
-            return;
-        }
-        if (target->p->left() == target) {
-            BinSTree* temp = target;
-            target->p->left() = nullptr;
-            target->l = nullptr;
-            target->r = nullptr;
-            delete temp;
-        }
-        else {
-            BinSTree* temp = target;
-            target->p->right() = nullptr;
-            target->l = nullptr;
-            target->r = nullptr;
-            delete temp;
-        }
-    }
-    else if (target->l == nullptr && target->r != nullptr) {
-        if (target->p->left() == target) {
-            BinSTree* temp = target;
-            target->p->left() = target->r;
-            target->r->parent() = target->p;
-            target->l = nullptr;
-            target->r = nullptr;
-            delete temp;
-        }
-        else {
-            BinSTree* temp = target;
-            target->p->right() = target->r;
-            target->r->parent() = target->p;
-            target->l = nullptr;
-            target->r = nullptr;
-            delete temp;
-        }
-    }
-    else if (target->l != nullptr && target->r == nullptr) {
-        if (target->p->left() == target) {
-            BinSTree* temp = target;
-            target->p->left() = target->l;
-            target->l->parent() = target->p;
-            target->l = nullptr;
-            target->r = nullptr;
-            delete temp;
-        }
-        else {
-            BinSTree* temp = target;
-            target->p->right() = target->l;
-            target->l->parent() = target->p;
-            target->l = nullptr;
-            target->r = nullptr;
-            delete temp;
-        }
-    }
-    /* two methods: find the minimum of the right children of find the maximum of the left children */
-    /* I chose to find the minimum of the right children */
-    else {
-        BinSTree* temp2 = target->r->findmin();
-        target->k = temp2->k;
-        temp2->del(temp2->k);
-    }
-}
-template<typename T>
-void BinSTree<T>::preordertraversal(void (*p)(T& item))
-{
-    if(k!=T()){
-        p(k);
-        if (l != nullptr) l->preordertraversal(p);
-        if (r != nullptr) r->preordertraversal(p);
-    }
-}
-template<typename T>
-void BinSTree<T>::inordertraversal(void(*p)(T& item))
-{
-    if(k!=T()){
-        if (l != nullptr) l->inordertraversal(p);
-        p(k);
-        if (r != nullptr) r->inordertraversal(p);
-    }
-    
-}
-template<typename T>
-void BinSTree<T>::postordertraversal(void (*p)(T& item))
-{
-    if(k!=T()){
-        if (l != nullptr) l->postordertraversal(p);
-        if (r != nullptr) r->postordertraversal(p);
-        p(k);
     }
 }
 
-void show(int& item)
+
+/* Here is an important thing. 
+If you use a template which nesting a structure of class, 
+You have to add "typename"-ex before the structrue of class*/
+template<typename T>
+typename RBTree<T>::PTNode RBTree<T>::findmax(PTNode rot)
 {
-    std::cout << item << ' ';
+    if (rot->r != sentry) return findmax(rot->r);
+    else return rot;
+}
+template<typename T>
+typename RBTree<T>::PTNode RBTree<T>::findmin(PTNode rot)
+{
+    if (rot->l != sentry) return findmin(rot->l);
+    else return rot;
+}
+template<typename T>
+void RBTree<T>::left_rotation(PTNode pt)
+{
+    PTNode x = pt, y = pt->r, z = x->p;
+    y->p = z;
+    if (z->l == x) {
+        z->l = y;
+    }
+    else if (z->r == x) {
+        z->r = y;
+    }
+    x->r = y->l;
+    y->l->p = x;
+    y->l = x;
+    x->p = y;
+}
+template<typename T>
+void RBTree<T>::right_rotation(PTNode pt)
+{
+    PTNode x = pt, y = pt->l, z = pt->p;
+    y->p = z;
+    if (z->l == x) {
+        z->l = y;
+    }
+    else if (z->r == x) {
+        z->r = y;
+    }
+    x->l = y->r;
+    y->r->p = x;
+    y->r = x;
+    x->p = y;
+}
+template<typename T>
+void RBTree<T>::insert_fixup(PTNode pt)
+{
+    PTNode z = pt->p, x = pt;
+    while (z->c == red) {
+        PTNode y = sentry;
+        // if x is left child of z
+        if (z == z->p->l) {
+            y = z->p->r;
+            // case 1 uncle and father are red
+            if (y->c == red) {
+                z->c = black;
+                y->c = black;
+                // obviouly left child and right child are red, the grandfather is black
+                z->p->c = red;
+                x = z->p;
+                z = x->p;
+            } else if (x == z->r) {
+                left_rotation(z);
+            }
+            else {
+                z->c = black;
+                z->p->c = red;
+                right_rotation(z->p);
+            }
+        }
+        else {
+            y = z->p->l;
+            // case 1 uncle and father are red
+            if (y->c == red) {
+                z->c = black;
+                y->c = black;
+                z->p->c = red;
+                x = z->p;
+                z = x->p;
+            }
+            else if (x == z->l) {
+                right_rotation(z);
+            }
+            else {
+                z->c = black;
+                z->p->c = red;
+                left_rotation(z->p);
+            }
+            
+        }
+    }
+    root->c = black;
+}
+template<typename T>
+void RBTree<T>::insert(const T& item, PTNode pt)
+{
+    PTNode x = pt;
+    PTNode y = sentry;
+    PTNode NewNode = new TNode;
+    NewNode->k = item;
+    NewNode->l = sentry;
+    NewNode->r = sentry;
+    NewNode->c = red;
+    while (x != sentry) {
+        y = x;
+        if (x->k > item) x = x->l;
+        else x = x->r;
+    }
+    NewNode->p = y;
+    if (y == sentry) root = NewNode;
+    if (NewNode->k > y->k) y->r = NewNode;
+    else y->l = NewNode;
+    insert_fixup(NewNode);
+}
+
+template<typename T>
+void RBTree<T>::inordertraversal(PTNode pt)
+{
+    if (pt != sentry) {
+        inordertraversal(pt->l);
+        std::cout << pt->k << ' ';
+        inordertraversal(pt->r);
+    }
 }
 
 int main()
 {
-    BinSTree<int> root(6);
-    root.insert(1);
-    root.insert(3);
-    root.insert(2);
-    root.insert(5);
-    root.insert(9);
-    root.insert(7);
-    root.insert(8);
-    root.insert(4);
-    std::cout << "Pre:\n";
-    root.preordertraversal(show);
-    std::cout << "\nIn:\n";
-    root.inordertraversal(show);
-    std::cout << "\nPost:\n";
-    root.postordertraversal(show);
-    /* delete and inordershow */
-    std::cout << "\ndelete and inordershow:\n";
-    // root.del(5);
-    // root.inordertraversal(show);
-    // std::cout << std::endl;
-    // root.del(3);
-    // root.inordertraversal(show);
-    // root.del(6);
-    // root.inordertraversal(show);
-    for (int i=9;i>0;--i) {
-        if (i==6) continue;
-        else root.del(i);
-    }
-    root.inordertraversal(show);
-    root.del(6);
-    root.inordertraversal(show);
+    RBTree<int> root(11);
+    root.insert(2,root.retroot());
+    root.insert(14,root.retroot());
+    root.insert(1,root.retroot());
+    root.insert(7,root.retroot());
+    root.insert(5,root.retroot());
+    root.insert(8,root.retroot());
+    root.insert(15,root.retroot());
+    root.insert(4, root.retroot());
+    root.inordertraversal(root.retroot());
+
+
     return 0;
 }
