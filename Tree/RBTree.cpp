@@ -26,8 +26,8 @@ class RBTree
         RBTree(const T& item);
         ~RBTree();
         PTNode find(const T& item, PTNode r);
-        PTNode findmax(PTNode rot = root);
-        PTNode findmin(PTNode rot = root);
+        PTNode findmax(PTNode rot);
+        PTNode findmin(PTNode rot);
         void insert(const T& item, PTNode r);
         void inordertraversal(PTNode pt);
         PTNode retroot()const { return root; }
@@ -216,6 +216,7 @@ void RBTree<T>::inordertraversal(PTNode pt)
 int main()
 {
     RBTree<int> root(11);
+    std:: cout << "end\n";
     root.insert(2,root.retroot());
     root.insert(14,root.retroot());
     root.insert(1,root.retroot());
@@ -225,7 +226,7 @@ int main()
     root.insert(15,root.retroot());
     root.insert(4, root.retroot());
     root.inordertraversal(root.retroot());
-
-
+    
+    system("pause");
     return 0;
 }
