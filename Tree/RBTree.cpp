@@ -288,7 +288,7 @@ void RBTree<T>::delnode_fixup(PTNode pt)
                 left_rotation(x->p);
                 w = x->p->r;
             }
-            if (w->l->c == black && x->r->c == black) {
+            if (w->l->c == black && w->r->c == black) {
                 w->c = red;
                 x = x->p;
             }
